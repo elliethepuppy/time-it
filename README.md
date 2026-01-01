@@ -6,7 +6,7 @@
 
 you can simply call `time-it` using your favorite python interpreter. by default, if making the .py script executable, it will use whatever python interpreter you have installed at `/usr/bin/python`
 
-you can also re-name or cat the file to a file called simply `time-it` and mark that as executable using:
+you can also re-name the script or cat the file to just `time-it`, then mark that as executable using:
 
 ``` sh
 touch time-it && cat time-it.py > time-it && chmod +x time-it
@@ -16,7 +16,9 @@ touch time-it && cat time-it.py > time-it && chmod +x time-it
 
 this usage section assumes you chose to have a standalone `time-it` executable file. replace references to `./time-it` with the appropriate method you are using to call the script in the following section, and all in-app help documentation (i.e., what you see when using the `--help` flag). 
 
-place `time-it.py` in the same directory as the program you wish to time, then call `./time-it ./[name of program you wish to time] [OPTIONAL: number of runs]`
+place `time-it.py` in the same directory as the program you wish to time, then call `./time-it ./[name of program you wish to time] [OPTIONAL: number of runs] [optional -l/--log for log file]`
+
+if using the `--log` flag, the log will be written to `~/.cache/time-it.log`, and will always append the newest results.
 
 ### footnotes
 
