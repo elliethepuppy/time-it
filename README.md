@@ -1,6 +1,6 @@
 # Description
 
-`time-it` is a simple script to time a program that takes no args. it takes one mandatory argument in the form of an executable file you wish to time, and prints the average time of completion over some number of runs (10 by default), and each individual run's time, numbered and separated by linebreaks.
+`time-it` is a simple script to time a program. it takes one mandatory argument in the form of an executable file you wish to time, and prints the average time of completion over some number of runs (10 by default), and each individual run's time, numbered and separated by linebreaks.
 
 # Installation
 
