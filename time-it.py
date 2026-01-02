@@ -7,8 +7,29 @@ from datetime import datetime
 from pathlib import Path
 
 home = Path.home()
+HELP_MESSAGE = """
+time-it: a simple executable timer
+usage: place time-it in the same directory as the program you wish to time, then
+run './time-it [optional logging and interpreter flags] [./<your program name>
+or an appropriate script for your interpreter] [arguments for the timed program]
 
-def time_it(exe: str, times: int = 10) -> tuple[str, str]:
+all available flags:
+-h --help          display this help message
+-cl --clear-log    delete the log file located at
+                   ~/.config/time-it.log, if any
+-l --log           write the generated output to
+                   the log file located at
+                   ~/.config/time-it.log
+-i --interpreter   use an interpreter to run
+                   the program, rather than
+                   calling it inherently
+"""
+def print_help_and_exit(exit_code: int) -> None:
+    print(HELP_MESSAGE)
+    exit(exit_code)
+
+
+def time_it(exe_with_args: str, times: int = 10) -> tuple[str, str]:
     total_times: list[float] = []
     all_times: str = ""
     avg_time: float = 0.0
@@ -16,7 +37,7 @@ def time_it(exe: str, times: int = 10) -> tuple[str, str]:
 
     for i in range(times + 1):
         start = time.time()
-        subprocess.run([exe])
+        subprocess.run(exe_with_args.strip().split(" "))
         end = time.time()
         total_times.append(end - start)
 
@@ -31,52 +52,55 @@ def time_it(exe: str, times: int = 10) -> tuple[str, str]:
 
 
 def main(args: list[str]) -> None:
+    interpreter = ""
+    prog = ""
     log = False
+    clear_log = False
+    help_ = False
+    runs = 10
+    exe_with_args = ""
+
     if len(args) < 2:
         print("too few arguments.")
-        print("try 'time-it ./[executable in this directory] [optional number of times]'")
+        print("try 'time-it -h' for more information")
         exit(-1)
 
+    for arg in args:
+        if "./" in arg:
+            prog = arg
+        match arg:
+            case "-h" | "--help":
+                help_ = True
+            case "-l" | "--log":
+                log = True
+            case "-i" | "--interpreter":
+                interpreter = args[args.index(arg) + 1]
+                prog = args[args.index(arg) + 2]
+            case "-cl" | "--clear-log":
+                clear_log = True
+            case "-r" | "--runs":
+                if args[args.index(arg) + 1].isdigit():
+                    runs = int(args[args.index(arg) + 1])
 
-    if "./" not in args[1]:
-        if args[1] == "-h" or args[1] == "--help":
-            print("time-it: a simple executable timer")
-            print(
-                "usage: place time-it in the same directory as the",
-                "executable you wish to time, then call:"
-            )
-            print("'./time-it ./[executable you wish to time] [optional number of runs] [optional logging flag]")
-            print(
-                "NOTE: if timing a script, you should place a shebang operator",
-                "at the top of your script for the interpreter you intend to use,",
-                "then mark it as executable.\n"
-            )
-            print("ex. for bash: #!/usr/bin/bash")
-            exit(1)
+    if help_:
+        print_help_and_exit(1)
 
-        if args[1] == "-cl" or args[1] == "--clear-log":
-            try:
-                with open(home / ".config" / "time-it.log", "w") as f:
-                    f.write("")
-            except FileNotFoundError:
-                print("no logs to wipe")
+    if clear_log:
+        try:
+            with open(home / ".config" / "time-it.log", "w") as f:
+                f.write("")
+        except FileNotFoundError:
+            print("no logs to wipe")
 
-            exit(1)
+        exit(1)
 
-        print(f"{args[1]} is not an executable in this directory")
-        print(f"try './time-it ./{args[1]}'")
-        exit(-1)
-    elif len(args) == 2:
-        result = time_it(args[1])
-    elif len(args) > 2:
-        if "-l" in args[2::]:
-            log = True
-        if "--log" in args[2::]:
-            log = True
-        if args[2].isdigit():
-            result = time_it(args[1], int(args[2]))
-        else:
-            result = time_it(args[1])
+    if interpreter != "":
+        exe_with_args += f"{interpreter}"
+    exe_with_args += f" {prog}"
+    for arg in args[args.index(prog)::]:
+        exe_with_args += f" {arg}"
+
+    result = time_it(exe_with_args, runs)
 
     if log:
         try:

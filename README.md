@@ -16,7 +16,7 @@ touch time-it && cat time-it.py > time-it && chmod +x time-it
 
 this usage section assumes you chose to have a standalone `time-it` executable file. replace references to `./time-it` with the appropriate method you are using to call the script in the following section, and all in-app help documentation (i.e., what you see when using the `--help` flag). 
 
-place `time-it.py` in the same directory as the program you wish to time, then call `./time-it ./[name of program you wish to time] [OPTIONAL: number of runs] [optional -l/--log for log file]`
+place `time-it.py` in the same directory as the program you wish to time, then call `./time-it [optional logging and interpreter flags] [./<your program name here>, or an appropriate script for your chosen interpreter] [args for the program you're timing]`
 
 if using the `--log` flag, the log will be written to `~/.cache/time-it.log`, and will always append the newest results.
 
