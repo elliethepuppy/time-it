@@ -9,8 +9,8 @@ from pathlib import Path
 home = Path.home()
 HELP_MESSAGE = """
 time-it: a simple executable timer
-usage: place time-it in the same directory as the program you wish to time, then
-run './time-it [optional logging and interpreter flags] [./<your program name>
+usage: place time-it in the same directory as the program you wish to time, then \
+run './time-it [optional logging and interpreter flags] [./<your program name> \
 or an appropriate script for your interpreter] [arguments for the timed program]
 
 all available flags:
