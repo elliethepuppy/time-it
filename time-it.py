@@ -49,9 +49,7 @@ def time_it(exe_with_args: str, times: int = 10) -> tuple[str, str]:
         end = time.time()
         total_times.append(end - start)
 
-    for i in total_times:
-        tmp += i
-    avg_time = tmp / len(total_times)
+    avg_time = sum(total_times) / len(total_times)
 
     for i in range(len(total_times) - 1):
         all_times += f"run #{i + 1}: {total_times[i]:6f}\n"
