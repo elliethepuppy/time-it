@@ -14,7 +14,7 @@ def time_it(exe: str, times: int = 10) -> tuple[str, str]:
     avg_time: float = 0.0
     tmp: float = 0.0
 
-    for i in range(times):
+    for i in range(times + 1):
         start = time.time()
         subprocess.run([exe])
         end = time.time()
@@ -64,7 +64,7 @@ def main(args: list[str]) -> None:
             exit(1)
 
         print(f"{args[1]} is not an executable in this directory")
-        print(f"try 'time-it ./{args[1]}'")
+        print(f"try './time-it ./{args[1]}'")
         exit(-1)
     elif len(args) == 2:
         result = time_it(args[1])
