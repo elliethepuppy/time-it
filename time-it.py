@@ -14,18 +14,26 @@ run './time-it [optional logging and interpreter flags] [./<your program name> \
 or an appropriate script for your interpreter] [arguments for the timed program]
 
 all available flags:
--h --help          display this help message
--cl --clear-log    delete the log file located at
-                   ~/.config/time-it.log, if any
--l --log           write the generated output to
-                   the log file located at
-                   ~/.config/time-it.log
--i --interpreter   use an interpreter to run
-                   the program, rather than
-                   calling it inherently
+-h --help                                 display this help message
+
+-cl --clear-log                           delete the log file located at
+                                          ~/.config/time-it.log, if any
+
+-l --log                                   write the generated output to
+                                           the log file located at
+                                           ~/.config/time-it.log
+
+-i INTERPRETER --interpreter INTERPRETER   use an interpreter to run
+                                           the program, rather than
+                                           calling it inherently
+
+-r INT --runs INT                          specify a number of times
+                                           to time the program
 """
-def print_help_and_exit(exit_code: int) -> None:
+def print_help_and_exit(exit_code: int, exception: Exception | None = None) -> None:
     print(HELP_MESSAGE)
+    if exception != None:
+        print(exception)
     exit(exit_code)
 
 
@@ -41,8 +49,8 @@ def time_it(exe_with_args: str, times: int = 10) -> tuple[str, str]:
         end = time.time()
         total_times.append(end - start)
 
-    for i in range(len(total_times) - 1):
-        tmp += total_times[i]
+    for i in total_times:
+        tmp += i
     avg_time = tmp / len(total_times)
 
     for i in range(len(total_times) - 1):
@@ -52,19 +60,20 @@ def time_it(exe_with_args: str, times: int = 10) -> tuple[str, str]:
 
 
 def main(args: list[str]) -> None:
+    # flags to be set by arg parsing
     interpreter = ""
     prog = ""
+    exe_with_args = ""
+    runs = 10
     log = False
     clear_log = False
     help_ = False
-    runs = 10
-    exe_with_args = ""
 
+    # checking that there are at least enough arguments to even do anything
     if len(args) < 2:
-        print("too few arguments.")
-        print("try 'time-it -h' for more information")
-        exit(-1)
+        print_help_and_exit(-1, Exception("too few arguments"))
 
+    # parse arguments and set according flags
     for arg in args:
         if "./" in arg:
             prog = arg
@@ -87,16 +96,20 @@ def main(args: list[str]) -> None:
 
     if clear_log:
         try:
-            with open(home / ".config" / "time-it.log", "w") as f:
-                f.write("")
+            with open(home / ".config" / "time-it.log", "w") as out:
+                out.write("")
         except FileNotFoundError:
             print("no logs to wipe")
 
         exit(1)
 
+    # set up the arguments for `time_it()`
     if interpreter != "":
         exe_with_args += f"{interpreter}"
-    exe_with_args += f" {prog}"
+    if prog != "":
+        exe_with_args += f" {prog}"
+    else:
+        print_help_and_exit(-1, Exception("no program found"))
     for arg in args[args.index(prog)::]:
         exe_with_args += f" {arg}"
 
