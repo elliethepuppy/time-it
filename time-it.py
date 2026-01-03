@@ -41,7 +41,6 @@ def time_it(exe_with_args: str, times: int = 10) -> tuple[str, str]:
     total_times: list[float] = []
     all_times: str = ""
     avg_time: float = 0.0
-    tmp: float = 0.0
 
     for i in range(times + 1):
         start = time.time()
@@ -94,7 +93,7 @@ def main(args: list[str]) -> None:
 
     if clear_log:
         try:
-            with open(home / ".config" / "time-it.log", "w") as out:
+            with open(home / ".cache" / "time-it.log", "w") as out:
                 out.write("")
         except FileNotFoundError:
             print("no logs to wipe")
@@ -115,7 +114,7 @@ def main(args: list[str]) -> None:
 
     if log:
         try:
-            with open(home / ".config" / "time-it.log", "a") as out:
+            with open(home / ".cache" / "time-it.log", "a") as out:
                 out.write(f"times for {args[1]} on {datetime.today().strftime("%Y-%m-%d %H:%M:%s")}\n")
                 out.write(f"{result[0]}\n")
                 out.write(f"{result[1]}\n")
